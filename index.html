@@ -284,8 +284,8 @@ function renderTOC() {
   CHAPTERS.forEach(ch => {
     html += `
       <a href="#/chapter/${ch.num}" class="toc-item">
-        <span class="toc-num">${ch.title}</span>
-        <span class="toc-title"></span>
+        <span class="toc-num">${ch.num > 0 ? ch.num : ''}</span>
+        <span class="toc-title">${ch.title}</span>
         <span class="toc-time">${ch.time || ''}</span>
       </a>
     `;
