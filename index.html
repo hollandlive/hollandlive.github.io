@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#0f0f10">
+<title>Не проявляй</title>
+<style>
+  :root {
+    --bg: #0f0f10;
+    --bg-card: #1a1a1c;
+    --text: #e8e6e1;
+    --text-dim: #8a8782;
+    --accent: #c98a4b;
+    --border: #2a2a2c;
+    --font-serif: Georgia, 'Times New Roman', serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-serif);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(15, 15, 16, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: env(safe-area-inset-top) 0 0 0;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+  }
+
+  .title-link {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+  }
+
+  .title-link span {
+    color: var(--text-dim);
+    font-size: 13px;
+    display: block;
+    margin-top: 2px;
+    font-family: -apple-system, sans-serif;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+  }
+
+  /* --- Table of contents --- */
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .toc-item:active {
+    background: var(--bg-card);
+  }
+
+  .toc-num {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: -apple-system, sans-serif;
+    min-width: 56px;
+  }
+
+  .toc-title {
+    flex: 1;
+    font-size: 17px;
+    padding: 0 12px;
+  }
+
+  .toc-time {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: -apple-system, sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .intro {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .intro h1 {
+    font-size: 26px;
+    font-weight: 400;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+
+  .intro p {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-family: -apple-system, sans-serif;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* --- Chapter reading view --- */
+  .chapter-head {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .chapter-head h2 {
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0 0 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .chapter-head .time {
+    font-size: 14px;
+    color: var(--accent);
+    font-family: -apple-system, sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  .chapter-body {
+    font-size: 19px;
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+  }
+
+  .chapter-body p {
+    margin: 0 0 1.3em;
+  }
+
+  .chapter-body em {
+    color: var(--accent);
+  }
+
+  .nav-bottom {
+    display: flex;
+    gap: 10px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-btn {
+    flex: 1;
+    text-align: center;
+    padding: 14px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+    background: var(--bg-card);
+  }
+
+  .nav-btn:active {
+    background: var(--border);
+  }
+
+  .nav-btn.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .nav-btn .label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    margin-top: 8px;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.2s ease;
+  }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <a href="#/" class="title-link" id="header-title">
+      Не проявляй
+    </a>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+  </div>
+</div>
+
+<div class="container" id="app"></div>
+
+<script>
+let CHAPTERS = [];
+
+async function loadChapters() {
+  const res = await fetch('chapters.json');
+  CHAPTERS = await res.json();
+  render();
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function formatBody(body) {
+  return body
+    .split('\n')
+    .filter(p => p.trim().length > 0)
+    .map(p => {
+      let safe = escapeHtml(p.trim());
+      // markdown-ish: *italic*
+      safe = safe.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      return `<p>${safe}</p>`;
+    })
+    .join('\n');
+}
+
+function renderTOC() {
+  const app = document.getElementById('app');
+  document.getElementById('header-title').innerHTML = 'Не проявляй';
+  document.getElementById('progress-fill').style.width = '0%';
+
+  let html = `
+    <div class="intro">
+      <h1>Не проявляй</h1>
+      <p>Психологический триллер · 46 глав</p>
+    </div>
+  `;
+
+  CHAPTERS.forEach(ch => {
+    html += `
+      <a href="#/chapter/${ch.num}" class="toc-item">
+        <span class="toc-num">${ch.title}</span>
+        <span class="toc-title">${ch.num === 1 ? 'Начало' : ''}</span>
+        <span class="toc-time">${ch.time || ''}</span>
+      </a>
+    `;
+  });
+
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function renderChapter(num) {
+  const idx = CHAPTERS.findIndex(c => c.num === num);
+  if (idx === -1) { renderTOC(); return; }
+
+  const ch = CHAPTERS[idx];
+  const prev = CHAPTERS[idx - 1];
+  const next = CHAPTERS[idx + 1];
+
+  const app = document.getElementById('app');
+  document.getElementById('header-title').innerHTML = ch.title;
+  document.getElementById('progress-fill').style.width = `${((idx + 1) / CHAPTERS.length) * 100}%`;
+
+  app.innerHTML = `
+    <a href="#/" class="back-link">&larr; Оглавление</a>
+    <div class="chapter-head">
+      <h2>${ch.title}</h2>
+      <div class="time">${ch.time || ''}</div>
+    </div>
+    <div class="chapter-body">
+      ${formatBody(ch.body)}
+    </div>
+    <div class="nav-bottom">
+      <a class="nav-btn ${prev ? '' : 'disabled'}" href="${prev ? '#/chapter/' + prev.num : '#'}">
+        <span class="label">Назад</span>${prev ? prev.title : '—'}
+      </a>
+      <a class="nav-btn ${next ? '' : 'disabled'}" href="${next ? '#/chapter/' + next.num : '#'}">
+        <span class="label">Далее</span>${next ? next.title : '—'}
+      </a>
+    </div>
+  `;
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  const hash = window.location.hash;
+  const match = hash.match(/^#\/chapter\/(\d+)/);
+  if (match) {
+    renderChapter(parseInt(match[1], 10));
+  } else {
+    renderTOC();
+  }
+}
+
+window.addEventListener('hashchange', render);
+loadChapters();
+</script>
+
+</body>
+</html>
